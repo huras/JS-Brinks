@@ -1,0 +1,2 @@
+run:
+  yarn add sucrase nodemon -D
