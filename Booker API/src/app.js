@@ -5,8 +5,14 @@ class App {
   constructor() {
     this.server = express();
 
+    this.setMiddlewares();
     this.setRoutes();
   }
+
+  setMiddlewares() {
+    this.server.use(express.json());
+  }
+
   setRoutes() {
     this.server.use(routes);
   }
