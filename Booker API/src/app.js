@@ -5,6 +5,10 @@ class App {
   constructor() {
     this.server = express();
 
+    this.setRoutes();
+  }
+  setRoutes() {
+    this.server.use(routes);
   }
 }
 
