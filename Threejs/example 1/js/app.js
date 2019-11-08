@@ -32,3 +32,5 @@ container.appendChild(renderer.domElement);
 
 renderer.render(scene, camera);
 
+// https://discoverthreejs.com/book/first-steps/first-scene/
+
