@@ -1,0 +1,121 @@
+<html>
+  <head>
+    <script>
+      let buildCommands = str => {
+        let split = str.split(/\r?\n/g);
+        let res = split.map(item => {
+          return item.split(/(\s+)/).filter(function(e) {
+            return e.trim().length > 0;
+          });
+        });
+
+        console.log(res);
+
+        let comandos = [];
+        res.map(item => {
+          if (item.length == 0) {
+            return;
+          }
+
+          let usuario = item[2];
+          let grupo = item[3];
+          let nome_pasta_ou_arquivo = item[8];
+
+          let permissoesEmLetras = item[0];
+          // console.log(nome_pasta_ou_arquivo, permissoesEmLetras, item.length);
+
+          let ownerPermissions = {
+            read: permissoesEmLetras[1] == "r",
+            write: permissoesEmLetras[2] == "w",
+            execute: permissoesEmLetras[3] == "x"
+          };
+
+          let groupPermissions = {
+            read: permissoesEmLetras[4] == "r",
+            write: permissoesEmLetras[5] == "w",
+            execute: permissoesEmLetras[6] == "x"
+          };
+          let publicPermissions = {
+            read: permissoesEmLetras[7] == "r",
+            write: permissoesEmLetras[8] == "w",
+            execute: permissoesEmLetras[9] == "x"
+          };
+
+          let permitionsGroup = [
+            ownerPermissions,
+            groupPermissions,
+            publicPermissions
+          ];
+
+          let permissionasValue = {
+            read: 4,
+            write: 2,
+            execute: 1
+          };
+
+          let numeroPermissao = permitionsGroup.map(item => {
+            let permissaoFinal = 0;
+            if (item.read) {
+              permissaoFinal += 4;
+            }
+            if (item.write) {
+              permissaoFinal += 2;
+            }
+            if (item.execute) {
+              permissaoFinal += 1;
+            }
+
+            return permissaoFinal;
+          });
+          console.log(numeroPermissao);
+
+          numeroPermissao = numeroPermissao.reduce((acumulador, item) => {
+            return (acumulador += "" + item);
+          });
+
+          let novoComandoPermissao =
+            "sudo chmod " + numeroPermissao + " " + nome_pasta_ou_arquivo;
+          let novoComandoPermissaoUsuario =
+            "sudo chown " + usuario + ":" + grupo + " " + nome_pasta_ou_arquivo;
+
+          var node = document.getElementById("output");
+          div1 = document.createElement("div");
+          div2 = document.createElement("div");
+
+          div1.innerText = novoComandoPermissao;
+          div2.innerText = novoComandoPermissaoUsuario;
+
+          node.appendChild(div1);
+          node.appendChild(div2);
+
+          comandos.push(novoComandoPermissao);
+          comandos.push(novoComandoPermissaoUsuario);
+        });
+
+        // console.log(comandos);
+      };
+
+      var openFile = function(event) {
+        var input = event.target;
+
+        var reader = new FileReader();
+        reader.onload = function() {
+          var text = reader.result;
+
+          buildCommands(text);
+
+          // var node = document.getElementById("output");
+          // node.innerText = text;
+          // console.log(reader.result.substring(0, 200));
+        };
+        reader.readAsText(input.files[0]);
+      };
+    </script>
+  </head>
+  <body>
+    <input type="file" accept="text/plain" onchange="openFile(event)" /><br />
+    <div id="output">
+      ...
+    </div>
+  </body>
+</html>
