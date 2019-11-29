@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+
+    <script src='./code.js'></script>
+    <style>
+        .dragable{
+            background-color: red;
+            padding: 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .dropzone{
+            background-color: greenyellow;
+            padding: 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+    </style>
+
+</head>
+<body>
+
+        <div class='parent'>
+            <span 
+                class='dragable' 
+
+                id='draggableSpan' 
+                draggable='true' 
+                ondragstart='onDragStart(event);'
+
+                
+            > draggable </span>
+            <span 
+                class='dropzone' 
+
+                id='draggableSpan2' 
+                
+
+                ondragover='onDragOver(event);' 
+                ondrop='onDrop(event);'
+            >  dropzone </span>
+        </div>
+        
+</body>
+</html>
