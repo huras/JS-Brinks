@@ -9,14 +9,19 @@ class Unit {
 
         this.speed = { x: 0, y: 0 };
         this.bouncyness = 0.0;
-        this.fome = 0;
+        this.fome = 40;
+        this.state = 'idle';
     }
 
-    draw() {
-        var circle = new Path2D();
-        circle.arc(this.x, this.y, this.size, 0, 2 * Math.PI);
-        this.ctx.fillStyle = this.fill;
-        this.ctx.fill(circle);
+    draw() {        
+            var circle = new Path2D();
+            circle.arc(this.x, this.y, this.size, 0, 2 * Math.PI);
+            this.ctx.fillStyle = this.fill;
+            this.ctx.fill(circle);
+    
+            ctx.font = "12px Arial";
+            ctx.fillText(this.fome.toFixed(2), this.x - 15, this.y + this.size + 15);
+        
     }
 
     findClosestUnit(units) {
@@ -83,9 +88,43 @@ class Unit {
         this.speed.y *= 0.9;
     }
 
-    runSystems(steps){
+    runSystems(steps, world){
+        if( this.state == 'hungry'){
+        
+                let closestUnitData = this.findClosestFoodpiece(world.foods);
+                if (closestUnitData.closestUnit) {
+                    let xSteps = 0,
+                    ySteps = 0;
+    
+                    if (closestUnitData.closestUnit.x < this.x) {
+                        xSteps--;
+                    } else if (closestUnitData.closestUnit.x > this.x) {
+                        xSteps++;
+                    }
+    
+                    if (closestUnitData.closestUnit.y < this.y) {
+                        ySteps--;
+                    } else if (closestUnitData.closestUnit.y > this.y) {
+                        ySteps++;
+                    }                        
+    
+                    this.walk(xSteps, ySteps);
+                }
+            
+            this.checkFoodCollision(world.foods);            
+        }
+
         this.inertia(steps);
+        this.checkScreenColision(width, height);
+        this.draw();
+
         this.fome += 0.1;
+        
+        if(this.fome > 20){
+            this.state = 'hungry';
+        } else {
+            this.state = 'idle';
+        }
     }
 
     checkUnitCollision(units) {
@@ -162,13 +201,16 @@ class Food {
         circle.arc(this.x, this.y, this.size, 0, 2 * Math.PI);
         this.ctx.fillStyle = this.fill;
         this.ctx.fill(circle);
+
+        this.x += (Math.random() - 0.5) * 5;
+        this.y += (Math.random() - 0.5) * 5;
     }
 }
 
 class Mundo{
-    constructor(individuos){
+    constructor(individuos, foods){
         this.units = this.generateUnits(individuos);
-        this.foods = this.generateInitialFood(10);
+        this.foods = this.generateInitialFood(foods);
         
         // this.createFood();
     }
@@ -178,8 +220,8 @@ class Mundo{
         for (let i = 0; i < amount; i++) {
             const u = new Unit(
               ctx,
-              Math.random() * 800,
-              Math.random() * 600,
+              Math.random() * width,
+              Math.random() * height,
               "rgb(" +
                 Math.random() * 255 +
                 "," +
@@ -188,7 +230,7 @@ class Mundo{
                 Math.random() * 255 +
                 ")",
               15 + Math.random() * 5,
-              0.5 + Math.random() / 2
+              0.1 + Math.random() / 2
             );
             units.push(u);
           }
@@ -198,7 +240,7 @@ class Mundo{
 
     generateInitialFood(amount){
         let foods = [];
-        for (let i = 0; i < 10; i++) {
+        for (let i = 0; i < amount; i++) {
             foods.push(this.createNewFood());
         }
 
@@ -208,8 +250,8 @@ class Mundo{
     createNewFood(){
         const u = new Food(
             ctx,
-            Math.random() * 800,
-            Math.random() * 600,
+            Math.random() * width,
+            Math.random() * height,
             "rgb(34, 177, 76)",
             5 + Math.random() * 5,
           );
@@ -239,33 +281,7 @@ class Mundo{
     runUnits(){
         let lala = 0;
         this.units.map(item => {
-            lala++;
-            if(item.fome > 50){
-                let closestUnitData = item.findClosestFoodpiece(this.foods);
-                if (closestUnitData.closestUnit && (lala % 2) != 300) {
-                    let xSteps = 0,
-                    ySteps = 0;
-    
-                    if (closestUnitData.closestUnit.x < item.x) {
-                        xSteps--;
-                    } else if (closestUnitData.closestUnit.x > item.x) {
-                        xSteps++;
-                    }
-    
-                    if (closestUnitData.closestUnit.y < item.y) {
-                        ySteps--;
-                    } else if (closestUnitData.closestUnit.y > item.y) {
-                        ySteps++;
-                    }
-    
-                    item.walk(xSteps, ySteps);
-                }
-            }
-            item.runSystems(1);
-            item.checkScreenColision(800, 600);
-            // item.checkUnitCollision(this.units);
-            item.checkFoodCollision(this.foods);
-            item.draw();
+            item.runSystems(1, window.mundo);
         });
     }
     runFood(){
@@ -275,9 +291,10 @@ class Mundo{
     }
 }
 
+let width = 1024, height = 600;
 function loop() {
     window.ctx.fillStyle = "#fff";
-    window.ctx.fillRect(0, 0, 800, 600);
+    window.ctx.fillRect(0, 0, width, height);
 
     if(mundo)
         mundo.step();
@@ -288,9 +305,9 @@ function start() {
     var canvas = document.getElementById("tutorial");
     if (canvas.getContext) {
         var ctx = canvas.getContext("2d");
-        window.ctx = ctx;          
+        window.ctx = ctx;
 
-        mundo = new Mundo(15);
+        mundo = new Mundo(5, 5);
         window.mundo = mundo;
 
         var myTimer = setInterval(loop, 20);
