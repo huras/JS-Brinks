@@ -9,6 +9,7 @@ class Unit {
 
         this.speed = { x: 0, y: 0 };
         this.bouncyness = 0.0;
+        this.fome = 0;
     }
 
     draw() {
@@ -51,7 +52,7 @@ class Unit {
     }
 
     twoPointDistance(x1, y1, x2, y2) {
-        return Math.sqrt(Math.pow(x1 - x2, 2), Math.pow(y1 - y2, 2));
+        return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
     }
 
     walk(xSteps, ySteps) {
@@ -77,6 +78,14 @@ class Unit {
 
         this.x += steps * this.speed.x;
         this.y += steps * this.speed.y;
+
+        this.speed.x *= 0.9;
+        this.speed.y *= 0.9;
+    }
+
+    runSystems(steps){
+        this.inertia(steps);
+        this.fome += 0.1;
     }
 
     checkUnitCollision(units) {
@@ -102,14 +111,18 @@ class Unit {
     checkFoodCollision(foods) {
         let closestUnitData = this.findClosestFoodpiece(foods);
         if (closestUnitData) {
-            console.log(closestUnitData.distance);
+            // console.log(closestUnitData.distance);
             if (
                 closestUnitData.distance <=
-                this.size / 2
+                this.size
             ) {
-                window.mundo.consumeFood(closestUnitData.closestUnit);
+                window.mundo.consumeFood(closestUnitData.closestUnit, this);
             }
         }
+    }
+
+    ingerirNutrientes(valorNutricional){
+        this.fome -= valorNutricional * 2;
     }
 
     checkScreenColision(w, h) {
@@ -155,9 +168,9 @@ class Food {
 class Mundo{
     constructor(individuos){
         this.units = this.generateUnits(individuos);
-        this.foods = [];
+        this.foods = this.generateInitialFood(10);
         
-        this.createFood();
+        // this.createFood();
     }
 
     generateUnits(amount){
@@ -174,8 +187,8 @@ class Mundo{
                 "," +
                 Math.random() * 255 +
                 ")",
-              15 + Math.random() * 18,
-              0.25 + Math.random() / 2
+              15 + Math.random() * 5,
+              0.5 + Math.random() / 2
             );
             units.push(u);
           }
@@ -183,23 +196,37 @@ class Mundo{
         return units;
     }
 
-    createFood(){
+    generateInitialFood(amount){
+        let foods = [];
         for (let i = 0; i < 10; i++) {
-            const u = new Food(
-              ctx,
-              Math.random() * 800,
-              Math.random() * 600,
-              "rgb(34, 177, 76)",
-              5 + Math.random() * 1,
-            );
-            this.foods.push(u);
-          }
+            foods.push(this.createNewFood());
+        }
+
+        return foods;
     }
 
-    consumeFood(food){
+    createNewFood(){
+        const u = new Food(
+            ctx,
+            Math.random() * 800,
+            Math.random() * 600,
+            "rgb(34, 177, 76)",
+            5 + Math.random() * 5,
+          );
+        return u;
+    }
+
+    spawnNewFood(){        
+        this.foods.push(this.createNewFood());
+    }
+
+    consumeFood(food, unit){
         this.foods.map((item, index) => {
             if (item == food){
                 this.foods.splice(index, 1);
+                this.spawnNewFood();
+                unit.ingerirNutrientes(item.size);
+                // unit.size += 0.5;
             }
         })
     }
@@ -213,28 +240,30 @@ class Mundo{
         let lala = 0;
         this.units.map(item => {
             lala++;
-            let closestUnitData = item.findClosestFoodpiece(this.foods);
-            if (closestUnitData.closestUnit && (lala % 2) != 0) {
-                let xSteps = 0,
-                ySteps = 0;
-
-                if (closestUnitData.closestUnit.x < item.x) {
-                    xSteps--;
-                } else if (closestUnitData.closestUnit.x > item.x) {
-                    xSteps++;
+            if(item.fome > 50){
+                let closestUnitData = item.findClosestFoodpiece(this.foods);
+                if (closestUnitData.closestUnit && (lala % 2) != 300) {
+                    let xSteps = 0,
+                    ySteps = 0;
+    
+                    if (closestUnitData.closestUnit.x < item.x) {
+                        xSteps--;
+                    } else if (closestUnitData.closestUnit.x > item.x) {
+                        xSteps++;
+                    }
+    
+                    if (closestUnitData.closestUnit.y < item.y) {
+                        ySteps--;
+                    } else if (closestUnitData.closestUnit.y > item.y) {
+                        ySteps++;
+                    }
+    
+                    item.walk(xSteps, ySteps);
                 }
-
-                if (closestUnitData.closestUnit.y < item.y) {
-                    ySteps--;
-                } else if (closestUnitData.closestUnit.y > item.y) {
-                    ySteps++;
-                }
-
-                item.walk(xSteps, ySteps);
             }
-            item.inertia(1);
+            item.runSystems(1);
             item.checkScreenColision(800, 600);
-            item.checkUnitCollision(this.units);
+            // item.checkUnitCollision(this.units);
             item.checkFoodCollision(this.foods);
             item.draw();
         });
@@ -261,7 +290,7 @@ function start() {
         var ctx = canvas.getContext("2d");
         window.ctx = ctx;          
 
-        mundo = new Mundo(1);
+        mundo = new Mundo(15);
         window.mundo = mundo;
 
         var myTimer = setInterval(loop, 20);
