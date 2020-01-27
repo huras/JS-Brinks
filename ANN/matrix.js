@@ -1,92 +1,105 @@
-
 class Matrix {
+  constructor(rows = 1, cols = 1) {
+    this.rows = rows;
+    this.cols = cols;
+    this.data = [];
 
-    constructor(rows = 1, cols = 1){
-        this.rows = rows;
-        this.cols = cols;
-        this.data = [];
+    for (let i = 0; i < this.rows; i++) {
+      this.data[i] = [];
+      for (let j = 0; j < this.cols; j++) {
+        this.data[i][j] = 0;
+      }
+    }
+  }
 
-        for (let i = 0; i < this.rows; i++) {
-            this.data[i] = [];
-            for (let j = 0; j < this.cols; j++) {
-                this.data[i][j] = 0;
-            }
+  randomize() {
+    for (let i = 0; i < this.rows; i++) {
+      for (let j = 0; j < this.cols; j++) {
+        this.data[i][j] = Math.random();
+      }
+    }
+  }
+
+  add(n) {
+    if (n instanceof Matrix) {
+      for (let i = 0; i < this.rows; i++) {
+        for (let j = 0; j < this.cols; j++) {
+          this.data[i][j] += n.data[i][j];
         }
+      }
+    } else {
+      for (let i = 0; i < this.rows; i++) {
+        for (let j = 0; j < this.cols; j++) {
+          this.data[i][j] += n;
+        }
+      }
+    }
+  }
+
+  map(f) {
+    for (let i = 0; i < this.rows; i++) {
+      for (let j = 0; j < this.cols; j++) {
+        let val = this.data[i][j];
+        this.data[i][j] = f(val, i, j, this.data);
+      }
+    }
+  }
+
+  toArray() {
+    let arr = [];
+    for (let i = 0; i < this.rows; i++) {
+      for (let j = 0; j < this.cols; j++) {
+        arr.push(this.data[i][j]);
+      }
+    }
+    return arr;
+  }
+
+  static multiply(m, n) {
+    if (m.cols !== n.rows) {
+      console.log("Matrizes incompatíveis");
+      return undefined;
     }
 
-    randomize (max = 10){
-        for (let i = 0; i < this.rows; i++) {
-            for (let j = 0; j < this.cols; j++) {
-                this.data[i][j] = Math.floor(Math.random() * 10);
-            }
-        }
-    }
+    let result = new Matrix(m.rows, n.cols);
+    let a = m.data;
+    let b = n.data;
 
-    add (n) {
-        if( n instanceof Matrix){
-            for (let i = 0; i < this.rows; i++) {
-                for (let j = 0; j < this.cols; j++) {
-                    this.data[i][j] += n.data[i][j];
-                }
-            }
-        } else {
-            for (let i = 0; i < this.rows; i++) {
-                for (let j = 0; j < this.cols; j++) {
-                    this.data[i][j] += n;
-                }
-            }
-        }
-    }
-
-    map (f) {
-        for (let i = 0; i < this.rows; i++) {
-            for (let j = 0; j < this.cols; j++) {
-                let val = this.data[i][j];
-                this.data[i][j] = f(val, i, j, this.data);
-            }
-        }
-    }
-
-    static multiply(m,n){
-        if(m.cols !== n.rows){
-            console.log('Matrizes incompatíveis');
-            return undefined;
+    for (let i = 0; i < result.rows; i++) {
+      for (let j = 0; j < result.cols; j++) {
+        let sum = 0;
+        for (let k = 0; k < m.rows; k++) {
+          sum += a[i][k] * b[k][j];
         }
 
-        let result = new Matrix(m.rows, n.cols);
-        let a = m.data;
-        let b = n.data;
-
-        for (let i = 0; i < result.rows; i++) {
-            for (let j = 0; j < result.cols; j++) {
-                let sum = 0;
-                for (let k = 0; k < m.rows; k++) {
-                    sum += a[i][k] * b[k][j];
-                }
-
-                result.data[i][j] = sum;
-            }
-        }
-
-        return result;
+        result.data[i][j] = sum;
+      }
     }
 
-    transposed () {
-        let result = new Matrix(this.cols, this.rows);
+    return result;
+  }
 
-        for (let i = 0; i < result.rows; i++) {
-            for (let j = 0; j < result.cols; j++) {
-                result.data[j][i] = this.data[i][j];
-            }
-        }
+  transposed() {
+    let result = new Matrix(this.cols, this.rows);
 
-        return result;
+    for (let i = 0; i < result.rows; i++) {
+      for (let j = 0; j < result.cols; j++) {
+        result.data[j][i] = this.data[i][j];
+      }
     }
 
-    print()
-    {
-        console.table(this.data);
+    return result;
+  }
+
+  print() {
+    console.table(this.data);
+  }
+
+  static fromArray(array) {
+    let retorno = new Matrix(array.length, 1);
+    for (let i = 0; i < array.length; i++) {
+      retorno.data[i][0] = array[i];
     }
-
-
+    return retorno;
+  }
 }
