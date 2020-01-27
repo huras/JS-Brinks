@@ -34,4 +34,6 @@ class NeuralNetwork {
     // output.print();
     return output.toArray();
   }
+
+  train(input, answer) {}
 }
