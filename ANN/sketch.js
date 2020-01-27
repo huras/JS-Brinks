@@ -5,13 +5,13 @@ function setup(){
     a.randomize();
     b.randomize();
 
-    console.table(a.matrix);
-    console.table(b.matrix);
+    console.table(a.data);
+    console.table(b.data);
 
     let c = a.multiply(b);
-    console.table(c.matrix);
+    console.table(c.data);
     
-    console.table(c.transposed().matrix);
+    console.table(c.transposed().data);
 }
 
 setup();
