@@ -58,6 +58,8 @@ class Matrix {
   static multiply(m, n) {
     if (m.cols !== n.rows) {
       console.log("Matrizes incompatíveis");
+      m.print();
+      n.print();
       return undefined;
     }
 
@@ -73,6 +75,27 @@ class Matrix {
         }
 
         result.data[i][j] = sum;
+      }
+    }
+
+    return result;
+  }
+
+  static subtract(m, n){
+    if(m.cols != n.cols || m.rows != n.rows){
+      console.log("Tamanhos diferentes na subtração das matrizes:");
+      m.print();
+      n.print();
+      return undefined;
+    }
+
+    let result = new Matrix(m.rows, n.cols);
+    let a = m.data;
+    let b = n.data;
+
+    for (let i = 0; i < m.rows; i++) {
+      for (let j = 0; j < m.cols; j++) {
+        result.data[i][j] = m.data[i][j] -= n.data[i][j];
       }
     }
 

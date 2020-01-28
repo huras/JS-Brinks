@@ -35,5 +35,13 @@ class NeuralNetwork {
     return output.toArray();
   }
 
-  train(input, answer) {}
+  train(input, answer) {
+    let outputs = this.feedforward(input);
+    outputs = Matrix.fromArray(outputs);
+
+    // Calculate the error
+    answer = Matrix.fromArray(answer);
+    let error = Matrix.subtract(answer, output);
+    
+  }
 }
