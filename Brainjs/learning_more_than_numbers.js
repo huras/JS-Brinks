@@ -1,0 +1,9 @@
+const restaurantes = {
+  "Brilliant Yellow Corral": "Monday",
+  "Penny's": "Tuesday",
+  "Right Coast Wings": "Wednesday",
+  "The Delusion Last Railway Car": "Thursday",
+  "Fun Day Inn": "Friday",
+  JHOP: "Saturday",
+  Owls: "Sunday"
+};

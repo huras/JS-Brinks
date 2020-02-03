@@ -15,9 +15,21 @@ function setup() {
 
   let nn = new NeuralNetwork(2, 2, 1);
 
-  let input = [1, 0];
-  let output = nn.feedforward(input);
-  console.log(output);
+  let inputs = [
+    [0, 0],
+    [0, 1],
+    [1, 0],
+    [1, 1]
+  ];
+  let answers = [[0], [1], [1], [0]];
+
+  for (let i = 0; i < 1; i++) {
+    let input = inputs[i];
+    let answer = answers[i];
+    console.log(input, "input");
+    console.log(answer, "answer");
+    nn.train(input, answer);
+  }
 }
 
 setup();

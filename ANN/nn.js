@@ -36,12 +36,24 @@ class NeuralNetwork {
   }
 
   train(input, answer) {
-    let outputs = this.feedforward(input);
-    outputs = Matrix.fromArray(outputs);
+    let output = this.feedforward(input);
+    output = Matrix.fromArray(output);
+    output.print("output");
 
     // Calculate the error
     answer = Matrix.fromArray(answer);
-    let error = Matrix.subtract(answer, output);
-    
+    let outputError = Matrix.subtract(answer, output);
+    outputError.print("error");
+
+    // this.weights_ho.print("weights");
+    // this.weights_ho.transposed().print("weights transposed");
+    let hiddenError = Matrix.multiply(
+      this.weights_ho.transposed(),
+      outputError
+    );
+    hiddenError.print("hidden error");
+
+    // let inputError = Matrix.multiply(this.weights_ih.transposed(), hiddenError);
+    // inputError.print("input error");
   }
 }

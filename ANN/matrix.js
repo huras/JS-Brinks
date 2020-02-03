@@ -70,7 +70,7 @@ class Matrix {
     for (let i = 0; i < result.rows; i++) {
       for (let j = 0; j < result.cols; j++) {
         let sum = 0;
-        for (let k = 0; k < m.rows; k++) {
+        for (let k = 0; k < m.cols; k++) {
           sum += a[i][k] * b[k][j];
         }
 
@@ -81,8 +81,8 @@ class Matrix {
     return result;
   }
 
-  static subtract(m, n){
-    if(m.cols != n.cols || m.rows != n.rows){
+  static subtract(m, n) {
+    if (m.cols != n.cols || m.rows != n.rows) {
       console.log("Tamanhos diferentes na subtração das matrizes:");
       m.print();
       n.print();
@@ -105,8 +105,8 @@ class Matrix {
   transposed() {
     let result = new Matrix(this.cols, this.rows);
 
-    for (let i = 0; i < result.rows; i++) {
-      for (let j = 0; j < result.cols; j++) {
+    for (let i = 0; i < this.rows; i++) {
+      for (let j = 0; j < this.cols; j++) {
         result.data[j][i] = this.data[i][j];
       }
     }
@@ -114,7 +114,10 @@ class Matrix {
     return result;
   }
 
-  print() {
+  print(text = null) {
+    if (text) {
+      console.log(text + " table:");
+    }
     console.table(this.data);
   }
 
