@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Bacteria ANN World</title>
+  </head>
+  <body>
+    <!-- Neural Network -->
+    <script src="/ANN/matrix.js"></script>
+    <script src="/ANN/nn.js"></script>
+
+    <div
+      style="border: 1px solid #ff000042; width: 800px; height: 600px;"
+      id="engine-screen"
+    ></div>
+    <div style="display: flex;">
+      <button
+        type="button"
+        onclick="initLife(document.getElementById('population').value)"
+      >
+        Iniciar
+      </button>
+      <label for="">
+        <input type="text" value="20" id="population" />
+      </label>
+    </div>
+
+    <!-- Project Scripts -->
+    <script src="foodPiece.js"></script>
+    <script src="bacteria.js"></script>
+    <script src="bacteriaWorldEngine.js"></script>
+    <script src="main.js"></script>
+  </body>
+</html>
