@@ -1,0 +1,33 @@
+run:
+  yarn add sucrase nodemon -D
+
+run: 
+  yarn add sequelize
+  npm install mysql2
+
+criar: 
+  src/app/controllers, 
+  src/app/models, 
+  src/config/database.js, 
+  src/database/migrations, 
+  src/database/seeds
+
+run:
+  yarn add sequelize-cli -D
+
+cria:
+  .sequelizerc
+
+run:
+  yarn sequelize migration:create --name=create-users
+
+run: 
+  yarn sequelize db:migrate
+
+yarn sequelize db:migrate:undo
+  Desfaz ultima migration
+yarn sequelize db:migrate:undo:all
+  Defaz todas as migrations
+  
+run:
+  yarn add sucrase nodemon -D
