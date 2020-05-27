@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Pagseguro</title>
+</head>
+<body>
+    <script src="/jQueryV3.4.1.js"></script>
+    <script type="text/javascript" src="https://stc.sandbox.pagseguro.uol.com.br/pagseguro/api/v2/checkout/pagseguro.directpayment.js"></script>
+
+    <div>
+        <button type="button" onclick="init()"> Iniciar </button>
+    </div>
+
+    <script>
+        const PAGSEGURO_EMAIL = 'hurast@gmail.com';
+        const PAGSEGURO_SANDBOX_TOKEN = 'F126A0045252988884D73FAAAD5A61EF';
+        const PAGSEGURO_PRODUCTION_TOKEN = 'c6bbb90d-0285-4c04-8c3c-2e6121d1f94c14c3da3d40c1a013f548e96cb7dd7c7b8b9a-e25c-464a-9f99-54bb778920c9';
+        const PAGSEGURO_SANDBOX_MODE = false;
+
+        function getPagseguroToken(){
+            return PAGSEGURO_SANDBOX_MODE ? PAGSEGURO_SANDBOX_TOKEN : PAGSEGURO_PRODUCTION_TOKEN;
+        }
+
+        function getPagseguroURL(){
+            return 'https://ws.' + (PAGSEGURO_SANDBOX_MODE ? 'sandbox.' : '') + 'pagseguro.uol.com.br';
+        }
+
+        async function init(){
+            let url = getPagseguroURL() + '/v2/sessions?email=' + PAGSEGURO_EMAIL + '&token=' + getPagseguroToken();
+
+            url = 'https://ws.pagseguro.uol.com.br/v2/sessions?email=hurast@gmail.com&token=c6bbb90d-0285-4c04-8c3c-2e6121d1f94c14c3da3d40c1a013f548e96cb7dd7c7b8b9a-e25c-464a-9f99-54bb778920c9';
+
+            // $.ajax({
+            //     type: 'post',
+            //     crossDomain: true,
+            //     method: 'post',
+            //     dataType: "json",
+            //     url: url
+            // }).always(function(res){
+            //     console.log(res);
+            // });
+
+            jQuery.support.cors = true;
+
+            $.ajax({
+                url: url,
+                type: 'post',
+                headers: {
+                    'User-Agent':'PostmanRuntime/7.22.0',
+                    'Accept': '*/*',
+                    'Cache-Control': 'no-cache',
+                    'Postman-Token': '59b9e1b5-3efe-40f0-9766-e01851d84185',
+                    'Host': 'ws.pagseguro.uol.com.br',
+                    'Accept-Encoding': 'gzip, deflate, br',
+                    'Cookie': 'homeFourPageVersion=default; csrfId=124; TRANSACTION_COOKIE=5ad1a91bb2f31c9c127caa2e8bb85fc1; LAST_SERVER_HIT=fc8cbf903f6bcdd77b31785c47d8fec74dd5bafe469e8bddc15953df8dafaaea; TS01e6af96=0160ed0a6c1cac2296d45e47d0bee578e88b68ee4641a3963a8fa5a6ab1b2e872bf20a8482857b6bb40c0d44842a1740b7387b5e27ddb4363df8b4882ff5f0ded4455ae46190bd2511b352e66e17d3fd7727fdff9f571d82ace7c1910e2b2015d1c5437f57eb128519578d10250d268d31a3c14e08; TS018765ea=01ed0a5ec2d2fb848d1262c653002c4134584dc95cd784a225332668610986f5c53c7986440ffff6c87ccde2e70439e0334d8035e4; TS0136888b=0160ed0a6c839dbd28702e066bcc07b151470699bdd37beed01d1c5d9b1b0dfc578629bcb644c2dd98fb793a75125a96a06b2fb3b8',
+                    'Content-Length': '0',
+                    'Connection': 'keep-alive',
+                    'Access-Control-Allow-Origin' : 'http://127.0.0.1:5500/'
+                },
+                dataType: 'json',
+                success: function (response) {
+                    alert(response);
+                },
+                error: function (xhr, status) {
+                    alert(xhr);
+                }
+            });
+
+            console.log('mama');
+        }
+
+        window.addEventListener("load", function(){
+            // init();
+        });
+    </script>
+</body>
+</html>

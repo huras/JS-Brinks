@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pokemon 3D</title>
+    <style>
+        body { margin: 0; }
+        canvas { display: block; }
+    </style>
+</head>
+<body>
+    <div id='placeholder1'></div>
+    <script src="three.js"></script>
+    <script src="keymanager.js"></script>
+    <!-- <script src="game2.js"></script> -->
+    <script type="module">
+
+        import * as THREE from './three.js-dev/build/three.module.js';
+
+        var camera, scene, renderer, clock, dataTexture, diffuseMap;
+
+        var spriteSheets = [];
+        let loadSpritesheet = (path,loader) => {
+            let newSpriteSheet = loader.load( path );
+            newSpriteSheet.minFilter = THREE.LinearFilter;
+            newSpriteSheet.generateMipmaps = false;
+            spriteSheets.push(newSpriteSheet);
+        }
+
+        init();
+
+        function init() {
+
+            camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 0.01, 10 );
+            camera.position.z = 2;
+
+            scene = new THREE.Scene();
+
+            clock = new THREE.Clock();
+
+            var loader = new THREE.TextureLoader();
+            loadSpritesheet('./tileset-gsk.png',loader);
+            // diffuseMap = loader.load( './three.js-dev/examples/textures/floors/FloorsCheckerboard_S_Diffuse.jpg', animate );
+            diffuseMap = loader.load( './three.js-dev/examples/textures/floors/FloorsCheckerboard_S_Diffuse.jpg', animate );
+            diffuseMap.minFilter = THREE.LinearFilter;
+            diffuseMap.generateMipmaps = false;
+
+            var geometry = new THREE.PlaneBufferGeometry( 2, 2 );
+            var material = new THREE.MeshBasicMaterial( { map: diffuseMap, wireframe: false } );
+
+            var mesh = new THREE.Mesh( geometry, material );
+            scene.add( mesh );
+
+            //
+
+            var width = 32;
+            var height = 32;
+
+            var data = new Uint8Array( width * height * 3 );
+            dataTexture = new THREE.DataTexture( data, width, height, THREE.RGBFormat );
+            //
+            renderer = new THREE.WebGLRenderer( { antialias: true } );
+            renderer.setPixelRatio( window.devicePixelRatio );
+            renderer.setSize( window.innerWidth, window.innerHeight );
+            document.body.appendChild( renderer.domElement );
+            //
+            window.addEventListener( 'resize', onWindowResize, false );
+        }
+
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+
+            renderer.setSize( window.innerWidth, window.innerHeight );
+        }
+
+        var last = 0;
+        var position = new THREE.Vector2();
+
+        let i = 0
+
+        function animate() {
+            lala();
+            requestAnimationFrame( animate );
+            return;
+
+            // 
+
+            var elapsedTime = clock.getElapsedTime();
+
+            if ( elapsedTime - last > 0.1 ) {
+                last = elapsedTime;
+
+                position.x = ( 32 * THREE.MathUtils.randInt( 1, 16 ) ) - 32;
+                position.y = ( 32 * THREE.MathUtils.randInt( 1, 16 ) ) - 32;
+
+                // generate new color data
+
+                updateDataTexture( dataTexture );
+
+                // perform copy from src to dest texture to a random position
+
+                renderer.copyTextureToTexture( position, dataTexture, diffuseMap );
+
+            }
+
+            
+        }
+
+        function lala(){
+            var tileSize = 16;
+            var tempdata = new Uint8Array( tileSize * tileSize * 3 );
+            var tempDataTexture = new THREE.DataTexture( tempdata, tileSize, tileSize, THREE.RGBFormat );
+
+            // var size = texture.image.width * texture.image.height;
+            // for ( var i = 0; i < size; i ++ ) {
+            //     var stride = i * 3;
+
+            //     tempDataTexture[ stride ] = spriteSheets[0].image r;
+            //     tempDataTexture[ stride + 1 ] = g;
+            //     tempDataTexture[ stride + 2 ] = b;
+            // }
+
+            console.log(spriteSheets[0]);
+
+            position.x = ( tileSize * 1 ) - tileSize;
+            position.y = ( tileSize * 1 ) - tileSize;
+            updateDataTexture( dataTexture );
+
+            renderer.copyTextureToTexture( position, dataTexture, diffuseMap );
+
+            renderer.render( scene, camera );
+        }
+
+        var color = new THREE.Color();
+
+        function updateDataTexture( texture ) {
+
+            var size = texture.image.width * texture.image.height;
+            var data = texture.image.data;
+
+            // generate a random color and update texture data
+
+            color.setHex( 0xffffff );
+
+            var r = Math.floor( color.r * 255 );
+            var g = Math.floor( color.g * 255 );
+            var b = Math.floor( color.b * 255 );
+
+            for ( var i = 0; i < size; i ++ ) {
+
+                var stride = i * 3;
+
+                data[ stride ] = r;
+                data[ stride + 1 ] = g;
+                data[ stride + 2 ] = b;
+
+            }
+
+        }
+
+    </script>
+</body>
+</html>
