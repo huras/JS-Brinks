@@ -139,6 +139,7 @@ class KartGame {
   }
 
   clickCanvas(event) {
+    this.racerScale = canvas.width > 768 ? 0.7 : this.racerMobileScale;
     var x = event.pageX - canvas.offsetLeft,
       y = event.pageY - canvas.offsetTop;
 
@@ -148,10 +149,11 @@ class KartGame {
         let element = this.kartRacers[i];
         let tempRect = {
           left: element.position.x,
-          top: element.position.y - (element.size.y * this.racerScale) / 2,
+          top: element.position.y,
           width: element.size.x * this.racerScale,
           height: element.size.y * this.racerScale,
         };
+
         let collided =
           y > tempRect.top &&
           y < tempRect.top + tempRect.height &&
@@ -560,15 +562,13 @@ class KartGame {
   }
 
   renderRacers() {
-    const showHitBoxes = false;
+    const showHitBoxes = true;
 
     //Set racers height
     this.racerScale = canvas.width > 768 ? 0.7 : this.racerMobileScale;
-    let heights = [];
+    let heights = [-0.3, 0, 0.4];
     if (this.layout == "mobile") {
-      heights = [0.2, 0.4, 0.68];
-    } else {
-      heights = [0.025, 0.4, 0.68];
+      heights = [-0.2, 0.1, 0.3];
     }
 
     if (
@@ -585,6 +585,7 @@ class KartGame {
       // Avança todos os carros até a posição deles
       this.kartRacers.map((item, i, arr) => {
         arr[i].position.y = this.getEstradaCoordinates(heights[i]);
+
         let speedToMove = 8 * Math.sign(targetPositions[i] - item.position.x);
         if (Math.abs(targetPositions[i] - item.position.x) < 8)
           speedToMove = targetPositions[i] - item.position.x;
@@ -644,7 +645,7 @@ class KartGame {
         item.size.y,
 
         item.position.x,
-        item.position.y - (item.size.y / 2) * this.racerScale,
+        item.position.y,
         item.size.x * this.racerScale,
         item.size.y * this.racerScale
       );
@@ -653,7 +654,7 @@ class KartGame {
         this.ctx.fillStyle = "#FF00005C";
         this.ctx.fillRect(
           item.position.x,
-          item.position.y - (item.size.y * this.racerScale) / 2,
+          item.position.y,
           item.size.x * this.racerScale,
           item.size.y * this.racerScale
         );
@@ -663,19 +664,6 @@ class KartGame {
   renderRacerFlags(question) {
     let questionOptinIndex = 0;
     this.kartRacers.map((item, index) => {
-      this.ctx.drawImage(
-        racer,
-        0,
-        0,
-        item.size.x,
-        item.size.y,
-
-        item.position.x,
-        item.position.y - (item.size.y / 2) * this.racerScale,
-        item.size.x * this.racerScale,
-        item.size.y * this.racerScale
-      );
-
       item.valorBandeira = question.options[index].toString();
       this.ctx.font = "bold 24px sans-serif";
       this.ctx.fillStyle = "#000000";
@@ -684,7 +672,7 @@ class KartGame {
         item.position.x +
           165 * this.racerScale -
           (item.valorBandeira.toString().length - 1) * 8,
-        item.position.y - 95 * this.racerScale,
+        item.position.y - (95 - item.size.y / 2) * this.racerScale,
         140
       );
     });
