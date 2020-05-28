@@ -295,13 +295,13 @@ class KartGame {
 
   // ============================================ Game logic
 
-  respawnRacers() {
+  getEstradaCoordinates = (y = 1) => {
     const estradaInicio = canvas.height / 2;
     const estradaFim = estradaInicio + canvas.height / 2;
-    let getEstradaCoordinates = (y = 1) => {
-      return estradaInicio + y * (estradaFim - estradaInicio);
-    };
+    return estradaInicio + y * (estradaFim - estradaInicio);
+  };
 
+  respawnRacers() {
     //Cria tipo corredor
     this.kartRacers = [];
     let kartRacer = (
@@ -320,24 +320,45 @@ class KartGame {
 
     // Cria corredores
     this.racerScale = canvas.width > 768 ? 0.7 : this.racerMobileScale;
-    this.kartRacers.push(
-      kartRacer(6, {
-        x: -401,
-        y: getEstradaCoordinates(this.layout == "desktop" ? 0.05 : 0.1),
-      })
-    );
-    this.kartRacers.push(
-      kartRacer(66, {
-        x: -351 + 125,
-        y: getEstradaCoordinates(0.4),
-      })
-    );
-    this.kartRacers.push(
-      kartRacer(999, {
-        x: -201,
-        y: getEstradaCoordinates(0.68),
-      })
-    );
+    if (this.layout == "mobile") {
+      this.kartRacers.push(
+        kartRacer(6, {
+          x: -401,
+          y: this.getEstradaCoordinates(0.2),
+        })
+      );
+      this.kartRacers.push(
+        kartRacer(66, {
+          x: -351 + 125,
+          y: this.getEstradaCoordinates(0.4),
+        })
+      );
+      this.kartRacers.push(
+        kartRacer(999, {
+          x: -201,
+          y: this.getEstradaCoordinates(0.68),
+        })
+      );
+    } else {
+      this.kartRacers.push(
+        kartRacer(6, {
+          x: -401,
+          y: this.getEstradaCoordinates(0.05),
+        })
+      );
+      this.kartRacers.push(
+        kartRacer(66, {
+          x: -351 + 125,
+          y: this.getEstradaCoordinates(0.4),
+        })
+      );
+      this.kartRacers.push(
+        kartRacer(999, {
+          x: -201,
+          y: this.getEstradaCoordinates(0.68),
+        })
+      );
+    }
   }
 
   // ============================================ Rendering
@@ -541,6 +562,15 @@ class KartGame {
   renderRacers() {
     const showHitBoxes = false;
 
+    //Set racers height
+    this.racerScale = canvas.width > 768 ? 0.7 : this.racerMobileScale;
+    let heights = [];
+    if (this.layout == "mobile") {
+      heights = [0.2, 0.4, 0.68];
+    } else {
+      heights = [0.025, 0.4, 0.68];
+    }
+
     if (
       this.gameState == KartGame.gameStates.WAIT_ANSWER ||
       this.gameState == KartGame.gameStates.WRONG_ANSWER
@@ -554,6 +584,7 @@ class KartGame {
 
       // Avança todos os carros até a posição deles
       this.kartRacers.map((item, i, arr) => {
+        arr[i].position.y = this.getEstradaCoordinates(heights[i]);
         let speedToMove = 8 * Math.sign(targetPositions[i] - item.position.x);
         if (Math.abs(targetPositions[i] - item.position.x) < 8)
           speedToMove = targetPositions[i] - item.position.x;
@@ -946,7 +977,7 @@ window.addEventListener("resize", () => {
 const questions = [];
 for (let i = 1; i <= 10; i++) {
   questions.push({
-    question: i * 2 + " ÷ 2",
+    question: i * 2 + " ÷ 2 =",
     answer: i,
     options: i == 1 ? [1, 2, 3] : [i - 1, i, i + 1],
   });
