@@ -422,6 +422,9 @@ class Vector2 {
 class Engine {
   constructor() {
     this.context = canvas.getContext("2d");
+    this.context.imageSmoothingEnabled = false;
+    this.context.msImageSmoothingEnabled = false;
+    this.context.mozImageSmoothingEnabled = false;
     this.characters = [];
 
     this.teste1();
