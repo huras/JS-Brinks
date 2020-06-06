@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <meta name="theme-color" content="rgb(168,152,136)" />
+    <title>RPG Test</title>
+    <style>
+      body {
+        margin: 0;
+      }
+      @media (max-width: 768px) {
+        body {
+          margin: 0;
+          height: calc(100vh - 4px);
+          width: calc(100vw - 4px);
+        }
+        canvas {
+          width: 100%;
+          height: 100%;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="canvas" width="1024" height="720"></canvas>
+    <script src="main.js"></script>
+
+    <script>
+      window.addEventListener("load", function () {
+        setTimeout(function () {
+          // This hides the address bar:
+          window.scrollTo(0, 1);
+        }, 0);
+      });
+    </script>
+  </body>
+</html>
